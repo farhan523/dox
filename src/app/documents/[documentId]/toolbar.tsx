@@ -17,6 +17,14 @@ import {
 import {cn} from "@/lib/utils";
 import {useEditorStore} from "@/store/use-editor-store";
 import {Separator} from "@/components/ui/separator";
+import {type Level} from "@tiptap/extension-heading";
+
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ToolbarButtonProps {
 	onClick: () => void;
@@ -129,6 +137,7 @@ export function Toolbar() {
 			/>
 
 			{/* Todo : Font Family */}
+			<FontFamilyButton />
 
 			<Separator
 				orientation='vertical'
@@ -136,6 +145,7 @@ export function Toolbar() {
 			/>
 
 			{/* Todo : Font Heading */}
+			<HeadingSelectorButton />
 
 			<Separator
 				orientation='vertical'
@@ -176,5 +186,134 @@ export function Toolbar() {
 				<ToolbarButton key={item.label} {...item} />
 			))}
 		</div>
+	);
+}
+
+function HeadingSelectorButton() {
+	const {editor} = useEditorStore();
+	const Headings = [
+		{
+			label: "P",
+			value: "0",
+			fontSize: "16px",
+		},
+		{
+			label: "H1",
+			value: "1",
+			fontSize: "32px",
+		},
+		{
+			label: "H2",
+			value: "2",
+			fontSize: "24px",
+		},
+		{
+			label: "H3",
+			value: "3",
+			fontSize: "20px",
+		},
+		{
+			label: "H4",
+			value: "4",
+			fontSize: "18px",
+		},
+		{
+			label: "H5",
+			value: "5",
+			fontSize: "16px",
+		},
+	];
+
+	const getCurrentHeading = () => {
+		for (const heading of Headings) {
+			if (editor?.isActive("heading", {level: parseInt(heading.value)})) {
+				return heading.label;
+			}
+		}
+
+		return Headings[0].label;
+	};
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button
+					className={cn(
+						"h-7 w-[120] shrink-0 flex item-center justify-between rounded-sm hover:bg-neutral-200/80 cursor-pointer px-1.5 overflow-hidden",
+					)}
+				>
+					<span className='truncate'>{getCurrentHeading()}</span>
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				{Headings.map(({label, value, fontSize}) => (
+					<DropdownMenuItem
+						key={label}
+						style={{fontSize}}
+						onClick={() => {
+							if (label === "P") {
+								editor?.chain().focus().setParagraph().run();
+							} else {
+								editor
+									?.chain()
+									.focus()
+									.toggleHeading({level: parseInt(value) as Level})
+									.run();
+							}
+						}}
+					>
+						{label}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function FontFamilyButton() {
+	const {editor} = useEditorStore();
+
+	const fonts = [
+		{label: "Arial", value: "Arial"},
+		{label: "Times New Roman", value: "Times New Roman"},
+		{label: "Courier New", value: "Courier New"},
+		{label: "Georgia", value: "Georgia"},
+		{label: "Verdana", value: "Verdana"},
+	];
+
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<button
+					className={cn(
+						"h-7 w-[120] shrink-0 flex item-center justify-between rounded-sm hover:bg-neutral-200/80 cursor-pointer px-1.5 overflow-hidden",
+					)}
+				>
+					<span className='truncate'>
+						{editor?.getAttributes("textStyle").fontFamily || "Arial"}
+					</span>
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				{fonts.map((font) => (
+					<DropdownMenuItem
+						className={cn(
+							"h-7 text-sm flex items-center justify-between rounded-sm hover:bg-neutral-200/80 cursor-pointer px-1.5",
+							editor?.getAttributes("textStyle").fontFamily === font.value &&
+								"bg-neutral-200/80",
+						)}
+						key={font.value}
+						style={{fontFamily: font.value}}
+						onClick={() =>
+							editor?.getAttributes("textStyle").fontFamily === font.value
+								? editor?.chain()?.focus().unsetFontFamily().run()
+								: editor?.chain()?.focus().setFontFamily(font.value).run()
+						}
+					>
+						{font.label}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

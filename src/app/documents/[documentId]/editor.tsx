@@ -8,6 +8,7 @@ import { TableKit } from "@tiptap/extension-table";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
 import {useEditorStore} from "@/store/use-editor-store";
+import {TextStyle, FontFamily} from "@tiptap/extension-text-style";
 
 
 export const Editor = () => {
@@ -40,8 +41,7 @@ export const Editor = () => {
 		},
 		editorProps: {
 			attributes: {
-				style:
-					"padding-left:40px; padding-right:10px",
+				style: "padding-left:40px; padding-right:10px",
 				class:
 					"focus:outline-none print:border-0 bg-white border border-[#c7c7c7]  flex flex-col min-h-[1050px] w-[816px] pt-10 pb-10 cursor-text",
 			},
@@ -54,7 +54,8 @@ export const Editor = () => {
 			}),
 			TaskList,
 			TaskItem,
-
+			TextStyle,
+			FontFamily,
 			ImageResize,
 			TableKit.configure({
 				table: {resizable: true},
