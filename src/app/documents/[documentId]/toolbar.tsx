@@ -2,11 +2,15 @@
 "use client";
 // biome-ignore lint/style/useImportType: <explanation>
 import {
+	Ban,
 	Bold,
+	HighlighterIcon,
 	Italic,
 	ListTodoIcon,
 	LucideIcon,
 	MessageSquarePlusIcon,
+	Paintbrush2,
+	PaintBucket,
 	Printer,
 	Redo2Icon,
 	RemoveFormattingIcon,
@@ -168,7 +172,14 @@ export function Toolbar() {
 				className='!h-[20px] w-[2px] bg-neutral-300'
 			/>
 			{/* Todo : Text Color */}
+			<TextColorSelectorButton />
+
+			<Separator
+				orientation='vertical'
+				className='!h-[20px] w-[2px] bg-neutral-300'
+			/>
 			{/* Todo : Highlight Color */}
+			<HighlightSelectorButton />
 
 			<Separator
 				orientation='vertical'
@@ -186,6 +197,146 @@ export function Toolbar() {
 				<ToolbarButton key={item.label} {...item} />
 			))}
 		</div>
+	);
+}
+
+
+function TextColorSelectorButton() {
+	const {editor} = useEditorStore();
+	const Colors = [
+		{
+			label: "Orange",
+			value: "#ffc078",
+		},
+		{
+			label: "Green",
+			value: "#8ce99a",
+		},
+		{
+			label: "Blue",
+			value: "#74c0fc",
+		},
+		{
+			label: "Purple",
+			value: "#b197fc",
+		},
+		{
+			label: "Red ",
+			value: "#ffa8a8",
+		},
+	];
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button className='px-2 cursor-pointer'>
+					A
+					<div
+						style={{
+							backgroundColor:
+								editor?.getAttributes("textStyle").color || "#000000",
+						}}
+						className='h-[1px] w-full rounded-full'
+					></div>
+				</button>
+			</DropdownMenuTrigger>
+
+			<DropdownMenuContent className='grid grid-cols-3 '>
+				{Colors.map((color) => (
+					<DropdownMenuItem key={color.label} className='flex items-center '>
+						<button
+							onClick={() => {
+								editor?.chain().focus().setColor(color.value).run();
+							}}
+							style={{backgroundColor: color.value}}
+							className='w-4 h-4 rounded-[4px]'
+						/>
+					</DropdownMenuItem>
+				))}
+				<DropdownMenuItem className='flex items-center '>
+					<button
+						onClick={() => {
+							editor?.chain().focus().unsetColor().run();
+						}}
+						data-testid='unsetColor'
+						className='w-4 h-4 rounded-[4px]'
+					>
+						<Ban />
+					</button>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function HighlightSelectorButton() {
+	const {editor} = useEditorStore();
+	const Colors = [
+		{
+			label: "Orange",
+			value: "#ffc078",
+		},
+		{
+			label: "Green",
+			value: "#8ce99a",
+		},
+		{
+			label: "Blue",
+			value: "#74c0fc",
+		},
+		{
+			label: "Purple",
+			value: "#b197fc",
+		},
+		{
+			label: "Red ",
+			value: "#ffa8a8",
+		},
+	];
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button className='cursor-pointer px-2 flex items-center'>
+					<HighlighterIcon size={20} />
+					<div
+						style={{
+							backgroundColor: editor?.getAttributes("highlight").color,
+						}}
+						className='size-1 rounded-full'
+					></div>
+				</button>
+			</DropdownMenuTrigger>
+
+			<DropdownMenuContent className='grid grid-cols-3 '>
+				{Colors.map((color) => (
+					<DropdownMenuItem key={color.label} className='flex items-center '>
+						<button
+							onClick={() => {
+								editor
+									?.chain()
+									.focus()
+									.toggleHighlight({color: color.value})
+									.run();
+							}}
+							style={{backgroundColor: color.value}}
+							className='w-4 h-4 rounded-[4px]'
+						/>
+					</DropdownMenuItem>
+				))}
+				<DropdownMenuItem className='flex items-center '>
+					<button
+						onClick={() => {
+							editor?.chain().focus().unsetHighlight().run();
+						}}
+						disabled={!editor?.isActive("highlight")}
+						className='w-4 h-4 rounded-[4px]'
+					>
+						<Ban />
+					</button>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

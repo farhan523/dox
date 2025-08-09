@@ -8,8 +8,8 @@ import { TableKit } from "@tiptap/extension-table";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
 import {useEditorStore} from "@/store/use-editor-store";
-import {TextStyle, FontFamily} from "@tiptap/extension-text-style";
-
+import {TextStyle, FontFamily, Color} from "@tiptap/extension-text-style";
+import Highlight from "@tiptap/extension-highlight";
 
 export const Editor = () => {
 	const {setEditor} = useEditorStore();
@@ -57,6 +57,8 @@ export const Editor = () => {
 			TextStyle,
 			FontFamily,
 			ImageResize,
+			Color,
+			Highlight.configure({multicolor: true}),
 			TableKit.configure({
 				table: {resizable: true},
 			}),
