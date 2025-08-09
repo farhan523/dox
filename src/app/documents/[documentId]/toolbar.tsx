@@ -1,11 +1,13 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 "use client";
+import {useCallback, useState} from "react";
 // biome-ignore lint/style/useImportType: <explanation>
 import {
 	Ban,
 	Bold,
 	HighlighterIcon,
 	Italic,
+	Link,
 	ListTodoIcon,
 	LucideIcon,
 	MessageSquarePlusIcon,
@@ -17,6 +19,8 @@ import {
 	SpellCheck2Icon,
 	Underline,
 	Undo2Icon,
+	Unlink,
+	Unlink2,
 } from "lucide-react";
 import {cn} from "@/lib/utils";
 import {useEditorStore} from "@/store/use-editor-store";
@@ -34,9 +38,15 @@ interface ToolbarButtonProps {
 	onClick: () => void;
 	isActive?: boolean;
 	icon: LucideIcon;
+	disabled?: boolean;
 }
 
-const ToolbarButton = ({onClick, isActive, icon: Icon}: ToolbarButtonProps) => {
+const ToolbarButton = ({
+	onClick,
+	isActive,
+	icon: Icon,
+	disabled,
+}: ToolbarButtonProps) => {
 	return (
 		<button
 			onClick={onClick}
@@ -44,6 +54,7 @@ const ToolbarButton = ({onClick, isActive, icon: Icon}: ToolbarButtonProps) => {
 				"text-sm h−7 min-w-7 flex items-center justify-center rounded-sm p-2 hover:bg-neutral-200/80 cursor-pointer",
 				isActive && " bg-neutral-200/80",
 			)}
+			disabled={disabled || false}
 		>
 			<Icon className='size-4' />
 		</button>
@@ -187,6 +198,14 @@ export function Toolbar() {
 			/>
 
 			{/* Todo : Link */}
+			<LinkButton />
+			<ToolbarButton
+				key={"unlink"}
+				icon={Unlink}
+				onClick={() => editor?.chain().focus().unsetLink().run()}
+				isActive={false}
+				disabled={!editor?.isActive("link")}
+			/>
 			{/* Todo : Image */}
 			{/* Todo : Align */}
 			{/* Todo : Line Height */}
@@ -197,6 +216,78 @@ export function Toolbar() {
 				<ToolbarButton key={item.label} {...item} />
 			))}
 		</div>
+	);
+}
+
+
+function LinkButton() {
+	const {editor} = useEditorStore();
+	const [open, setOpen] = useState(false);
+
+	const [url, setUrl] = useState("");
+
+	const setLink = useCallback(() => {
+		// cancelled
+		if (url === null) {
+			return;
+		}
+		// empty
+		if (url === "") {
+			editor?.chain().focus().extendMarkRange("link").unsetLink().run();
+
+			return;
+		}
+		// update link
+		try {
+			editor
+				?.chain()
+				.focus()
+				.extendMarkRange("link")
+				.setLink({href: url})
+				.run();
+		} catch (error: any) {
+			alert(error.message);
+		}
+		setOpen(false);
+	}, [editor, url]);
+
+	return (
+		<DropdownMenu
+			modal={false}
+			open={open}
+			onOpenChange={(open) => {
+				if (open) setUrl(editor?.getAttributes("link").href || "");
+				else setUrl("");
+				setOpen(open);
+			}}
+		>
+			<DropdownMenuTrigger asChild>
+				<button
+					className={cn(
+						"p-2 rounded-[10px]  cursor-pointer",
+						editor?.isActive("link") && "bg-neutral-200/80",
+					)}
+				>
+					<Link size={15} />
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				<input
+					type='url'
+					value={url}
+					className='outline-none h-full px-1'
+					onChange={(e) => {
+						setUrl(e.currentTarget.value);
+					}}
+				/>
+				<button
+					onClick={setLink}
+					className='text-white bg-black px-4 py-2 click:bg-neutral-800 hover:bg-neutral-800 cursor-pointer rounded-[10px]'
+				>
+					add
+				</button>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

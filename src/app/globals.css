@@ -115,6 +115,16 @@
 /* Basic editor styles */
 .tiptap {
 
+  /* Link styles */
+  a{
+    color: purple;
+    cursor: pointer;
+  }
+
+  a:hover{
+      color: "blue";
+  }
+
   img{
     display: block;
     height: auto;
