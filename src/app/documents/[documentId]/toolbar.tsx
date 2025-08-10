@@ -1,11 +1,16 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 "use client";
-import {useCallback, useState} from "react";
+import {use, useCallback, useState} from "react";
 // biome-ignore lint/style/useImportType: <explanation>
 import {
+	AlignCenterIcon,
+	AlignJustify,
+	AlignLeftIcon,
+	AlignRightIcon,
 	Ban,
 	Bold,
 	HighlighterIcon,
+	ImageIcon,
 	Italic,
 	Link,
 	ListTodoIcon,
@@ -168,6 +173,7 @@ export function Toolbar() {
 			/>
 
 			{/* Todo : Font Size */}
+			<FontSizeSelectorButton />
 
 			<Separator
 				orientation='vertical'
@@ -207,8 +213,11 @@ export function Toolbar() {
 				disabled={!editor?.isActive("link")}
 			/>
 			{/* Todo : Image */}
+			<ImageButton />
 			{/* Todo : Align */}
+			<AlignButton />
 			{/* Todo : Line Height */}
+			<LineHeightSelectorButton />
 			{/* Todo : List */}
 			{/* Todo : Highlight Color */}
 
@@ -216,6 +225,243 @@ export function Toolbar() {
 				<ToolbarButton key={item.label} {...item} />
 			))}
 		</div>
+	);
+}
+
+function LineHeightSelectorButton() {
+	const {editor} = useEditorStore();
+	const LineHeightList = [
+		{
+			label: "1.5",
+			value: "1.5",
+			isActive: editor?.isActive("textStyle", {lineHeight: "1.5"}),
+			onclick: () =>
+				editor?.chain().focus().toggleTextStyle({lineHeight: "1.5"}).run(),
+		},
+		{
+			label: "2.0",
+			value: "2.0",
+			isActive: editor?.isActive("textStyle", {lineHeight: "2.0"}),
+			onclick: () =>
+				editor?.chain().focus().toggleTextStyle({lineHeight: "2.0"}).run(),
+		},
+		{
+			label: "4.0",
+			value: "4.0",
+			isActive: editor?.isActive("textStyle", {lineHeight: "4.0"}),
+			onclick: () =>
+				editor?.chain().focus().toggleTextStyle({lineHeight: "4.0"}).run(),
+		},
+	];
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button className='px-2 cursor-pointer hover:bg-neutral-200/80'>
+					{editor?.getAttributes("textStyle").lineHeight || 1.5}
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				{LineHeightList.map((item) => (
+					<DropdownMenuItem
+						key={item.label}
+						className={cn(
+							"flex items-center gap-2",
+							item.isActive && "bg-neutral-100",
+						)}
+						onClick={item.onclick}
+					>
+						{item.label}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function FontSizeSelectorButton() {
+	const {editor} = useEditorStore();
+	const FontSizeList = [
+		{
+			label: "12",
+			value: "12px",
+			isActive: editor?.isActive("textStyle", {fontSize: "12px"}),
+			onclick: () => editor?.chain().focus().setFontSize("12px").run(),
+		},
+		{
+			label: "20",
+			value: "20px",
+			isActive: editor?.isActive("textStyle", {fontSize: "20px"}),
+			onclick: () => editor?.chain().focus().setFontSize("20px").run(),
+		},
+		{
+			label: "24",
+			value: "24px",
+			isActive: editor?.isActive("textStyle", {fontSize: "24px"}),
+			onclick: () => editor?.chain().focus().setFontSize("24px").run(),
+		},
+		{
+			label: "28",
+			value: "28px",
+			isActive: editor?.isActive("textStyle", {fontSize: "28px"}),
+			onclick: () => editor?.chain().focus().setFontSize("28px").run(),
+		},
+		{
+			label: "32",
+			value: "32px",
+			isActive: editor?.isActive("textStyle", {fontSize: "32px"}),
+			onclick: () => editor?.chain().focus().setFontSize("32px").run(),
+		},
+	];
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button className='px-2 cursor-pointer hover:bg-neutral-200/80'>
+					{editor?.getAttributes("textStyle").fontSize || "16px"}
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				{FontSizeList.map((item) => (
+					<DropdownMenuItem
+						key={item.label}
+						className={cn(
+							"flex items-center gap-2",
+							item.isActive && "bg-neutral-100",
+						)}
+						onClick={item.onclick}
+					>
+						{item.label}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function AlignButton() {
+	const {editor} = useEditorStore();
+
+	const AlignOptions = [
+		{
+			label: "Align Left",
+			icon: AlignLeftIcon,
+			onClick: () => editor?.chain().focus().setTextAlign("left").run(),
+			isActive: editor?.isActive({textAlign: "left"}),
+		},
+		{
+			label: "Align Center",
+			icon: AlignCenterIcon,
+			onClick: () => editor?.chain().focus().setTextAlign("center").run(),
+			isActive: editor?.isActive({textAlign: "center"}),
+		},
+		{
+			label: "Align Right",
+			icon: AlignRightIcon,
+			onClick: () => editor?.chain().focus().setTextAlign("right").run(),
+			isActive: editor?.isActive({textAlign: "right"}),
+		},
+		{
+			label: "Align Justify",
+			icon: AlignJustify,
+			onClick: () => editor?.chain().focus().setTextAlign("justify").run(),
+			isActive: editor?.isActive({textAlign: "justify"}),
+		},
+	];
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button
+					className={cn(
+						"cursor-pointer hover:bg-neutral-200/80 p-2 rounded-[10px]",
+						editor?.getAttributes("textAlign") !== null && "bg-neutral-200/80",
+					)}
+				>
+					<AlignLeftIcon size={15} />
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className='overflow-hidden'>
+				{AlignOptions.map((item) => (
+					<DropdownMenuItem
+						className={cn(item.isActive ? "bg-neutral-200/80" : "")}
+						key={item.label}
+						onClick={item.onClick}
+					>
+						<item.icon size={15} />
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function ImageButton() {
+	const {editor} = useEditorStore();
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+	const addImage = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e?.target?.files?.[0]; // Get the selected file
+
+			if (file) {
+				const objectUrl = URL.createObjectURL(file); // Create a local URL
+
+				// Insert the image into the editor
+				editor?.chain().focus().setImage({src: objectUrl}).run();
+			}
+		},
+		[editor],
+	);
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<button className='cursor-pointer hover:bg-neutral-200/80 p-2 rounded-[10px]'>
+					<ImageIcon size={15} />
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className='overflow-hidden'>
+				<label
+					htmlFor='upload-image'
+					className='cursor-pointer w-full pb-2 text-center hover:bg-neutral-200/80 h-full flex items-center justify-center rounded-[5px]'
+				>
+					Upload Image
+					<input
+						id='upload-image'
+						className='hidden'
+						multiple={false}
+						onChange={addImage}
+						type='file'
+						accept='image/*'
+					/>
+				</label>
+				<Separator className='w-[200px]' />
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						if (!imageUrl) return;
+						editor?.chain().focus().setImage({src: imageUrl}).run();
+						setImageUrl(null);
+					}}
+					className='w-[200px]'
+				>
+					<input
+						value={imageUrl || ""}
+						onChange={(e) => setImageUrl(e.target.value)}
+						type='text'
+						placeholder='Enter Image URL'
+						className='w-full p-2 rounded-[5px] hover:bg-neutral-200/80'
+					/>
+					<button
+						type='submit'
+						className='w-full p-2 rounded-[5px] hover:bg-neutral-800 cursor-pointer bg-black text-white'
+					>
+						Submit
+					</button>
+				</form>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

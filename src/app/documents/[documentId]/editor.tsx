@@ -8,9 +8,18 @@ import { TableKit } from "@tiptap/extension-table";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
 import {useEditorStore} from "@/store/use-editor-store";
-import {TextStyle, FontFamily, Color} from "@tiptap/extension-text-style";
+import {
+	TextStyle,
+	FontFamily,
+	Color,
+	FontSize,
+	LineHeight,
+} from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+
+
 
 export const Editor = () => {
 	const {setEditor} = useEditorStore();
@@ -55,9 +64,18 @@ export const Editor = () => {
 			}),
 			TaskList,
 			TaskItem,
-			TextStyle,
+			TextAlign.configure({
+				types: ["heading", "paragraph", "table", "ul", "ol"],
+			}),
+
 			FontFamily,
-			ImageResize,
+			FontSize,
+			TextStyle,
+			LineHeight,
+			ImageResize.configure({
+				inline: true,
+			}),
+			Image,
 			Color,
 			Highlight.configure({multicolor: true}),
 			TableKit.configure({
