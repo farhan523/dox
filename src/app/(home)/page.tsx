@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Navbar from "./Navbar";
 import Link from "next/link";
+import TemplateGallery from "./template-gallery";
 
 export default function Home() {
 	return (
@@ -9,7 +10,7 @@ export default function Home() {
 				<Navbar />
 			</div>
 			<div className='mt-16 p-4'>
-				Click <Link href='/documents/123'>here</Link> to go to a document.
+				<TemplateGallery />
 			</div>
 		</div>
 	);
