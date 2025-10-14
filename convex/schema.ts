@@ -5,7 +5,7 @@ export default defineSchema({
   document: defineTable({
     title: v.string(),
     initialContent: v.optional(v.string()),
-    ownerId: v.id("users"),
+    ownerId: v.string(),
     roomId:v.optional(v.string()),
     organizationId:v.optional(v.string()),
 

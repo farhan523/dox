@@ -3,13 +3,19 @@ import Image from "next/image";
 import Navbar from "./Navbar";
 import Link from "next/link";
 import TemplateGallery from "./template-gallery";
-import { useQuery } from "convex/react";
+import {usePaginatedQuery} from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
-export default function Home() {
-	const documents = useQuery(api.document.listDocuments);
+import {DocumentsTable} from "./documents-table";
 
-	if (!documents) return <div>Loading...</div>;
+export default function Home() {
+	const {results, status, loadMore, isLoading} = usePaginatedQuery(
+		api.document.listDocuments,
+		{},
+		{initialNumItems: 5},
+	);
+
+	if (isLoading) return <div>Loading...</div>;
 
 	return (
 		<div className='flex flex-col  min-h-screen '>
@@ -19,13 +25,7 @@ export default function Home() {
 			<div className='mt-16 p-4'>
 				<TemplateGallery />
 			</div>
-			{
-				documents.map((document) => (
-					<div key={document._id}>
-						<Link href={`/documents/${document._id}`}>{document.title}</Link>
-					</div>
-				))
-			}
+			<DocumentsTable documents={results} loadMore={loadMore} status={status} />
 		</div>
 	);
 }

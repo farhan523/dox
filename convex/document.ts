@@ -1,8 +1,33 @@
-import { query } from "./_generated/server";
+import { query,mutation } from "./_generated/server";
+
+import {ConvexError, v} from "convex/values";
+import { paginationOptsValidator } from "convex/server";
+export const createDocument = mutation({
+  args: {
+    title:v.optional(v.string()),
+    initialContent:v.optional(v.string())
+  },
+  handler: async (ctx,args) => {
+    // do something
+    const user = await ctx.auth.getUserIdentity();
+    if(!user){
+      throw new ConvexError("Unauthorized")
+    }
+    const document = await ctx.db.insert("document",{
+      title:args.title ?? "Untitled",
+      ownerId:user.subject, 
+      initialContent:args.initialContent
+      
+    });
+    return document;
+  },
+})
+
 
 export const listDocuments = query({
-  handler: async (ctx) => {
-    const tasks = await ctx.db.query("document").collect();
+  args: {paginationOpts:paginationOptsValidator},
+  handler: async (ctx,args) => {
+    const tasks = await ctx.db.query("document").paginate(args.paginationOpts);
     return tasks;
     // do something with `tasks`
   },
