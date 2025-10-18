@@ -2,6 +2,7 @@ import { query,mutation } from "./_generated/server";
 
 import {ConvexError, v} from "convex/values";
 import { paginationOptsValidator } from "convex/server";
+
 export const createDocument = mutation({
   args: {
     title:v.optional(v.string()),
@@ -30,5 +31,23 @@ export const listDocuments = query({
     const tasks = await ctx.db.query("document").paginate(args.paginationOpts);
     return tasks;
     // do something with `tasks`
+  },
+});
+
+export const removeById = mutation({
+  args: {id:v.id("document")},
+  handler: async (ctx, { id }) => {
+     const user = await ctx.auth.getUserIdentity();
+    if(!user){
+      throw new ConvexError("Unauthorized")
+    }
+    const document = await ctx.db.get(id);
+    if(!document){
+      throw new ConvexError("Document not found")
+    }
+    if(document.ownerId !== user.subject){
+      throw new ConvexError("Unauthorized")
+    }
+    await ctx.db.delete(id);
   },
 });

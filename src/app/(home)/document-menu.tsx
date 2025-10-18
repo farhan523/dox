@@ -1,4 +1,4 @@
-import {ExternalLinkIcon, MoreVertical} from "lucide-react";
+import {ExternalLinkIcon, MoreVertical, Trash} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 import {Id} from "../../../convex/_generated/dataModel";
@@ -11,6 +11,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {RemoveDialog} from "./remove-dialog";
 
 interface DocumentMenuProps {
 	documentId: Id<"document">;
@@ -30,13 +31,22 @@ export default function DocumentMenu({
 					<MoreVertical className='h-4 w-4' />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent>
+			<DropdownMenuContent onClick={(e) => e.preventDefault()}>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => onNewTab(documentId)}>
 					Open in a new tab <ExternalLinkIcon className='ml-2 h-4 w-4' />
 				</DropdownMenuItem>
-				<DropdownMenuItem>Billing</DropdownMenuItem>
+				<RemoveDialog documentId={documentId}>
+					<DropdownMenuItem
+						onSelect={(e) => e.preventDefault()}
+						className='text-red-300 flex items-center gap-3'
+					>
+						<Trash className='mr-2 h-4 w-4 text-red-300' />
+						Remove
+					</DropdownMenuItem>
+				</RemoveDialog>
+
 				<DropdownMenuItem>Team</DropdownMenuItem>
 				<DropdownMenuItem>Subscription</DropdownMenuItem>
 			</DropdownMenuContent>
