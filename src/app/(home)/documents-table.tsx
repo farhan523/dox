@@ -10,6 +10,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {LoaderIcon} from "lucide-react";
+import {DocumentsRow} from "./document-row";
 
 interface DocumentsTableProps {
 	documents: Doc<"document">[] | undefined;
@@ -22,5 +24,42 @@ export const DocumentsTable = ({
 	loadMore,
 	status,
 }: DocumentsTableProps) => {
-	return <></>;
+	return (
+		<div className='w-full max-w-5xl mx-auto px-16 py-6 flex flex-col gap-5 '>
+			{documents === undefined ? (
+				<div className='flex justify-center items-center h-24'>
+					<LoaderIcon className='animate-spin text-muted-foreground size-5 ' />
+				</div>
+			) : (
+				<Table>
+					<TableHeader>
+						<TableRow className='hover:bg-transparent border-none '>
+							<TableHead className=''>Name</TableHead>
+							<TableHead>&nbsp;</TableHead>
+							<TableHead className='hidden md:table-cell'>Shared</TableHead>
+							<TableHead className='text-right'>Created at</TableHead>
+						</TableRow>
+					</TableHeader>
+					{documents.length === 0 ? (
+						<TableHeader>
+							<TableRow className='hover:bg-transparent border-none '>
+								<TableCell
+									colSpan={4}
+									className='h-24 text-center text-muted-foreground'
+								>
+									No Documents Found
+								</TableCell>
+							</TableRow>
+						</TableHeader>
+					) : (
+						<TableBody>
+							{documents.map((document) => (
+								<DocumentsRow document={document} key={document._id} />
+							))}
+						</TableBody>
+					)}
+				</Table>
+			)}
+		</div>
+	);
 };
