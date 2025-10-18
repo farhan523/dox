@@ -51,3 +51,21 @@ export const removeById = mutation({
     await ctx.db.delete(id);
   },
 });
+
+export const updateById = mutation({
+  args: {id:v.id("document"),title:v.string()},
+  handler: async (ctx, { id,title }) => {
+     const user = await ctx.auth.getUserIdentity();
+    if(!user){
+      throw new ConvexError("Unauthorized")
+    }
+    const document = await ctx.db.get(id);
+    if(!document){
+      throw new ConvexError("Document not found")
+    }
+    if(document.ownerId !== user.subject){
+      throw new ConvexError("Unauthorized")
+    }
+    await ctx.db.patch(id,{title});
+  },
+});

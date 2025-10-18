@@ -1,4 +1,4 @@
-import {ExternalLinkIcon, MoreVertical, Trash} from "lucide-react";
+import {ExternalLinkIcon, FilePenIcon, MoreVertical, Trash} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 import {Id} from "../../../convex/_generated/dataModel";
@@ -12,6 +12,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {RemoveDialog} from "./remove-dialog";
+import {RenameDialog} from "./rename-dialog";
 
 interface DocumentMenuProps {
 	documentId: Id<"document">;
@@ -31,11 +32,15 @@ export default function DocumentMenu({
 					<MoreVertical className='h-4 w-4' />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent onClick={(e) => e.preventDefault()}>
+			<DropdownMenuContent
+				className='cursor-pointer'
+				align='start'
+				onClick={(e) => e.preventDefault()}
+			>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => onNewTab(documentId)}>
-					Open in a new tab <ExternalLinkIcon className='ml-2 h-4 w-4' />
+					<ExternalLinkIcon className=' h-4 w-4' /> Open in a new tab
 				</DropdownMenuItem>
 				<RemoveDialog documentId={documentId}>
 					<DropdownMenuItem
@@ -47,8 +52,15 @@ export default function DocumentMenu({
 					</DropdownMenuItem>
 				</RemoveDialog>
 
-				<DropdownMenuItem>Team</DropdownMenuItem>
-				<DropdownMenuItem>Subscription</DropdownMenuItem>
+				<RenameDialog documentId={documentId} initialTitle={title}>
+					<DropdownMenuItem
+						onSelect={(e) => e.preventDefault()}
+						className=' flex items-center gap-3'
+					>
+						<FilePenIcon className='mr-2 h-4 w-4 ' />
+						Rename
+					</DropdownMenuItem>
+				</RenameDialog>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
