@@ -26,13 +26,25 @@ export const createDocument = mutation({
 
 
 export const listDocuments = query({
-  args: {paginationOpts:paginationOptsValidator},
-  handler: async (ctx,args) => {
-    const tasks = await ctx.db.query("document").paginate(args.paginationOpts);
+  args: {paginationOpts:paginationOptsValidator,search:v.optional(v.string())},
+  handler: async (ctx,{paginationOpts,search}) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if(!user){
+      throw new ConvexError("Unauthorized")
+    }
+
+    if(search){
+      const tasks = await ctx.db.query('document').withSearchIndex('search_title',(q)=>q.search('title',search)).paginate(paginationOpts);
+      return tasks;
+    }
+    const tasks = await ctx.db.query("document").withIndex("by_owner_id",(q)=>q.eq("ownerId",user.subject)).paginate(paginationOpts);
     return tasks;
     // do something with `tasks`
   },
 });
+
+
 
 export const removeById = mutation({
   args: {id:v.id("document")},

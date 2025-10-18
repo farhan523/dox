@@ -7,15 +7,17 @@ import {usePaginatedQuery} from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
 import {DocumentsTable} from "./documents-table";
+import {useSearchParams} from "next/navigation";
 
 export default function Home() {
+	const search = useSearchParams();
 	const {results, status, loadMore, isLoading} = usePaginatedQuery(
 		api.document.listDocuments,
-		{},
+		{search: search.get("search") ?? undefined},
 		{initialNumItems: 5},
 	);
 
-	if (isLoading) return <div>Loading...</div>;
+	
 
 	return (
 		<div className='flex flex-col  min-h-screen '>
