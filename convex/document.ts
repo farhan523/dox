@@ -11,12 +11,17 @@ export const createDocument = mutation({
   handler: async (ctx,args) => {
     // do something
     const user = await ctx.auth.getUserIdentity();
+    
     if(!user){
       throw new ConvexError("Unauthorized")
     }
+    const organizationId = user.organization_id as string | undefined;
+
+    
     const document = await ctx.db.insert("document",{
       title:args.title ?? "Untitled",
       ownerId:user.subject, 
+      organizationId:organizationId,
       initialContent:args.initialContent
       
     });
@@ -29,15 +34,27 @@ export const listDocuments = query({
   args: {paginationOpts:paginationOptsValidator,search:v.optional(v.string())},
   handler: async (ctx,{paginationOpts,search}) => {
     const user = await ctx.auth.getUserIdentity();
-
+    console.log({user});
     if(!user){
       throw new ConvexError("Unauthorized")
+    }
+    console.log({organizationId:user.organization_id});
+    const organizationId = user.organization_id as string | undefined;
+    if( search && organizationId){
+      const tasks = await ctx.db.query("document").withSearchIndex('search_title',(q)=>q.search('title',search).eq('organizationId',organizationId)).paginate(paginationOpts);
+      return tasks;
+    } 
+
+    if(organizationId){
+      const tasks = await ctx.db.query("document").withIndex("by_organization_id",(q)=>q.eq("organizationId",organizationId)).paginate(paginationOpts);
+      return tasks;
     }
 
     if(search){
       const tasks = await ctx.db.query('document').withSearchIndex('search_title',(q)=>q.search('title',search)).paginate(paginationOpts);
       return tasks;
     }
+
     const tasks = await ctx.db.query("document").withIndex("by_owner_id",(q)=>q.eq("ownerId",user.subject)).paginate(paginationOpts);
     return tasks;
     // do something with `tasks`
