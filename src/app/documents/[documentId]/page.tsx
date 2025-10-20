@@ -1,6 +1,7 @@
 import { Editor } from "./editor";
 import Navbar from "./Navbar";
 import { Toolbar } from "./toolbar";
+import {Room} from "./room";
 
 export default function Document() {
 	return (
@@ -10,7 +11,10 @@ export default function Document() {
 				<Toolbar />
 			</div>
 			<div className='pt-[114px] print:pt-0'>
-				<Editor />
+				<Room>
+					<Editor />
+				</Room>	
+				
 			</div>
 		</div>
 	);

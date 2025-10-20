@@ -18,11 +18,13 @@ import {
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
+import { useLiveblocksExtension  } from "@liveblocks/react-tiptap";
 
 
 
 export const Editor = () => {
 	const {setEditor} = useEditorStore();
+	const liveblocks = useLiveblocksExtension();
 	const editor = useEditor({
 		onCreate: ({editor}) => {
 			setEditor(editor);
@@ -58,10 +60,12 @@ export const Editor = () => {
 		},
 		extensions: [
 			StarterKit.configure({
+				history: false ,
 				heading: {
 					levels: [1, 2, 3, 4, 5, 6],
 				},
 			}),
+			liveblocks as any,
 			TaskList,
 			TaskItem,
 			TextAlign.configure({

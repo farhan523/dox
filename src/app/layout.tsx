@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {NuqsAdapter} from "nuqs/adapters/next/app";
 import "./globals.css";
+import "@liveblocks/react-ui/styles.css";
+import "@liveblocks/react-tiptap/styles.css";
 import {ConvexClientProvider} from '@/components/ui/convex-client-provider'
 import {Toaster} from "@/components/ui/sonner";
 const geistSans = Geist({
