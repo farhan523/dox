@@ -18,7 +18,8 @@ import {
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
-import { useLiveblocksExtension  } from "@liveblocks/react-tiptap";
+import {useLiveblocksExtension} from "@liveblocks/react-tiptap";
+import {Threads} from "./Threads";
 
 
 
@@ -59,13 +60,13 @@ export const Editor = () => {
 			},
 		},
 		extensions: [
+			liveblocks,
 			StarterKit.configure({
-				history: false ,
+				history: false,
 				heading: {
 					levels: [1, 2, 3, 4, 5, 6],
 				},
 			}),
-			liveblocks as any,
 			TaskList,
 			TaskItem,
 			TextAlign.configure({
@@ -170,6 +171,7 @@ export const Editor = () => {
 		<div className='min-h-screen bg-[#fafbfd]'>
 			<div className='min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:min-w-0'>
 				<EditorContent editor={editor} />
+				<Threads editor={editor} />
 			</div>
 		</div>
 	);
