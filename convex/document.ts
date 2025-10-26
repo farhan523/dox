@@ -98,3 +98,11 @@ export const updateById = mutation({
     await ctx.db.patch(id,{title});
   },
 });
+
+export const getById = query({
+  args: {id:v.id("document")},
+  handler: async (ctx, { id }) => {
+    const document = await ctx.db.get(id);
+    return document;
+  },
+});
