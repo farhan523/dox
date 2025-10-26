@@ -38,6 +38,8 @@ import {
 } from "lucide-react";
 import {BsFilePdf} from "react-icons/bs";
 import {useEditorStore} from "@/store/use-editor-store";
+import {Avatars} from "./avatars";
+import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
 	const {editor} = useEditorStore();
@@ -289,6 +291,16 @@ export default function Navbar() {
 						</Menubar>
 					</div>
 				</div>
+			</div>
+			<div className="flex items-center gap-2 shrink-0">
+				<Avatars />
+				<OrganizationSwitcher
+					afterCreateOrganizationUrl={"/"}
+					afterLeaveOrganizationUrl='/'
+					afterSelectOrganizationUrl={"/"}
+					afterSelectPersonalUrl={"/"}
+				/>
+				<UserButton />
 			</div>
 		</nav>
 	);
