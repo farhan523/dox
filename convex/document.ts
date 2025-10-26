@@ -106,3 +106,19 @@ export const getById = query({
     return document;
   },
 });
+
+export const getByIds = query({
+  args: {ids:v.array(v.id("document"))},
+  handler: async (ctx, { ids }) => {
+    const document = [];
+    for(const id of ids){
+      const doc = await ctx.db.get(id);
+      if(doc){
+        document.push({id:doc._id,name:doc.title});
+      }else{
+        document.push({id, name:"Deleted Document"});
+      }
+    }
+    return document;
+  },
+});
